@@ -1,0 +1,102 @@
+@import url("https://fonts.googleapis.com/css2?family=Baumans&family=Kanit:wght@600&display=swap");
+
+* {
+    box-sizing: border-box;
+    margin: 0px;
+    padding: 0px;
+    font-family: "Kanit", sans-serif;
+}
+
+body {
+    background: linear-gradient(90deg,
+            hsla(197, 100%, 63%, 1) 0%,
+            hsla(294, 100%, 55%, 1) 100%);
+}
+
+.main {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.log_container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    border-radius: 30px;
+}
+
+form h1 {
+    text-align: center;
+    text-transform: uppercase;
+    padding: 0px 0px 5px 0px;
+    color: #303a4e;
+}
+
+form .inbox {
+    padding: 10px;
+    text-align: center;
+}
+
+form .inbox input {
+    width: 350px;
+    border-radius: 16px;
+    border: none;
+    outline: none;
+    padding: 13px;
+    background: #d3f3f1;
+    color: #303a4e;
+    font-size: 15px;
+}
+
+::placeholder {
+    opacity: 60%;
+}
+
+form .button {
+    padding: 0px 5px 0px 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#login {
+    padding: 8px;
+    width: 100px;
+    margin: 5px;
+    background-color: skyblue;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 10px;
+    color: #d3f3f1;
+    transition: all .2s;
+}
+
+#login:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    color: #303a4e;
+}
+
+.regLink a{
+    font-size: 13px;
+    color: #303a4e;
+}
+
+a.one:visited {color: #0000ff;}
+
+.regLink{
+    padding: 0px 8px 0px 0px;
+}
+
+#close{
+    font-size: 13px;
+    text-align: center;
+}
+button{
+    width: 40px;
+    height: 37px;
+}

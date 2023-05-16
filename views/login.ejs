@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/styleSheet/login.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        crossorigin="anonymous">
+        <script defer src="/javascripts/login.js"></script>
+</head>
+<body>
+    <div class="main">
+        <div class="log_container">
+            <form action="/login" method="post" id="log_from">
+                <h1>Login</h1>
+                <% if(typeof error!='undefined'){ %>
+                    <% error.details.forEach((e)=> { %>
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert" id="close" ">
+                            
+                            <%= e.message %>!
+                        </div>
+                        <% }); %>
+                            <% } %>
+
+                <div class="inbox">
+                    <input type="email" placeholder="Enter Your Email-id" name="log_email">
+                </div>
+                <div class="inbox">
+                    <input type="password" placeholder="Enter Your Passwords" name="log_passwords" onclick="showPasswrd()" id="passwords">
+                </div>
+                <div class="button">
+                    <input type="submit" value="Login" id="login" >
+                    <div class="regLink">
+                        <a href="/reg" target="_blank">You Don't Have An Account!</a><br>
+                        <a href="#">Forget Your Passwords!</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
