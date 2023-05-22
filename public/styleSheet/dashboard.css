@@ -20,17 +20,18 @@ body {
     align-items: center;
 }
 
-h1{
+h1 {
     text-align: center;
     color: #303a4e;
 }
 
-.logout{
+.logout {
     display: flex;
     justify-content: center;
     align-items: baseline;
 }
-.logout input {
+
+#logout-btn input {
     outline: none;
     border: none;
     border-radius: 10px;
@@ -39,11 +40,48 @@ h1{
     cursor: pointer;
     color: #303a4e;
     font-size: 16px;
-    transition: all .2s ;
+    transition: all .2s;
+}
+
+.dropdown-menu a:hover {
+    background-color: rgb(170, 231, 255);
 }
 
 .logout input:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     color: #ff4a08;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container .right-section {
+    height: 70vh;
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-section h6 {
+    text-align: left;
+    color: #fff;
+    font-size: 30px;
+}
+
+.container .left-section {
+    height: 70vh;
+    width: 40%;
+}
+
+.container .left-section img {
+    width: 550px;
+}
+
+#element {
+    color: #303a4e;
 }

@@ -1,9 +1,5 @@
 
 
-function closebar() {
-    document.getElementById('close').style.display = 'none'
-}
-
 function showPasswrd() {
     const showpass = document.getElementById('passwords')
     if (showpass.type === 'password') {

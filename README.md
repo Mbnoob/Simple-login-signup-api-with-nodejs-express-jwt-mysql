@@ -20,35 +20,35 @@ Setp 3 : Creating Tables on Database --
 
 Copy this line of code on SQL section in phpmyadmin Database.
 
-
+![localhost _ 127 0 0 1 _ curd_operation_with_html_css _ registard_users _ phpMyAdmin 5 2 0 - Google Chrome 16-05-2023 12_19_15 (2)](https://github.com/Mbnoob/Simple-login-signup-api-with-nodejs-express-jwt-mysql/assets/91155437/c5a51f61-0eff-4ad0-8ce5-74284dd15ea9)
 
 ## How to setup 
 
 step 1 : create a new Folder where you can stored your nodejs projects files.
  - 
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![Captures 17-05-2023 01_58_06 (2)_LI](https://github.com/Mbnoob/Simple-login-signup-api-with-nodejs-express-jwt-mysql/assets/91155437/335c8d8b-2ca7-48c3-9531-018ab060b036)
 
-step 2 :  Create a server.js file on this folder.
+step 2 :  Create a server.js file on this file.
  -
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![server js - curd_operation_with_html_css - Visual Studio Code 17-05-2023 01_38_29 (2)](https://github.com/Mbnoob/Simple-login-signup-api-with-nodejs-express-jwt-mysql/assets/91155437/103f7938-23d5-476d-b8e0-76562ad3d8f8)
 
 step 3 : Open the folder in VS code
  -
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![server js - curd_operation_with_html_css - Visual Studio Code 17-05-2023 01_42_46](https://github.com/Mbnoob/Simple-login-signup-api-with-nodejs-express-jwt-mysql/assets/91155437/e98cac5d-e40c-4dfc-bc51-5e114021ce20)
 
 - VS Code Download link 👉https://code.visualstudio.com/download
 
 step 4 : Open Turminal on VS code 
  -
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![server js - curd_operation_with_html_css - Visual Studio Code 17-05-2023 01_44_38](https://github.com/Mbnoob/Simple-login-signup-api-with-nodejs-express-jwt-mysql/assets/91155437/494246c7-1e3f-4575-b4ad-26e20464a958)
 
 - For Terminal you can also use "Hyper Terminal"👉 https://hyper.is/
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot](https://media.geeksforgeeks.org/wp-content/uploads/20221214211841/Screenshot-(5).png)
 
 - Learn some Terminal commands every user should know👉 https://www.techrepublic.com/article/16-terminal-commands-every-user-should-know/
 
@@ -87,10 +87,12 @@ step 6 : Download Nodemon, for automate your server.
 
 - ⚠ Note 👉 after installing nodemon create a scripts tag in ``` package.json ``` file , and write ```"start": "nodemon server.js"``` below the 'test' scripts.
 
+![package json - curd_operation_with_html_css - Visual Studio Code 17-05-2023 01_55_11](https://github.com/Mbnoob/Simple-login-signup-api-with-nodejs-express-jwt-mysql/assets/91155437/d3fac076-51ea-4d52-b53b-0c41c4cdf9da)
+
 step 7 : Recommended folder structure 👉
  -
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![server js - curd_operation_with_html_css - Visual Studio Code 17-05-2023 01_47_04 (2)](https://github.com/Mbnoob/Simple-login-signup-api-with-nodejs-express-jwt-mysql/assets/91155437/a8ee143a-12f9-4069-94a6-ffeec47cfd31)
 
 If everythings all set, now you can start the server.
 

@@ -8,20 +8,20 @@ const cookieParser = require('cookie-parser')
 const flash = require('connect-flash');
 
 app.set("view engine", "ejs");
+app.use(flash());
+app.use(cookieParser())
+app.use(body_parser.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(body_parser.urlencoded({ extended: true }));
-app.use(body_parser.json());
-app.use(cookieParser())
-app.use(flash());
 
 app.use(session({
   secret: process.env.SESSION_KEY,
-  resave: false,
+  resave: true,
   saveUninitialized: true
 }))
 
 //All Routers...............
-const router = require("./router/router");
+const router = require("./router/router")
 
 //All Handellers......
 app.use("/", router);

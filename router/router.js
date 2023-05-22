@@ -19,6 +19,7 @@ router.post("/reg",sessionChecker,(req, res) => {
   let dob = value.dob;
   let email_id = value.email_id;
   let password = hashSync(value.conforn_passwords, salt);
+  let username = value.First_name + ' ' + value.Last_name;
 
   if (error) {
   return res.render("index", { error });
@@ -28,16 +29,16 @@ router.post("/reg",sessionChecker,(req, res) => {
         if (err) {
         return res.render('index', {err})
         } else {
-          req.session.user = email_id
-          let jsonwebtoken = sign({ result: results.insertId, email_id: email_id }, process.env.JWT_SECRET, {
+          req.session.user = email_id,
+          req.session.name = username;
+          let jsonwebtoken = sign({ result: results.insertId, email_id: email_id, username: username }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPAIRED,
           });
           res.cookie('token', jsonwebtoken, {
           httpOnly: true,
           secure: true,
          })
-         console.log(req.session.user)
-          res.redirect('dashboard')
+          res.redirect('/dashboard')
         }
       })
     }
@@ -51,13 +52,11 @@ router.get("/login", sessionChecker,(req, res) => {
 
 router.post("/login", sessionChecker,(req, res) => {
   const { value, error } = log_schema.validate(req.body, { abortEarly: false });
-  // console.log('value', value)
   let email = value.log_email
   if (error) {
     return res.render("login", { error });
   } else {
     myconnections.query('SELECT * FROM `registard_users` WHERE email_id = ?', [email], (err, result)=>{
-      // console.log('results', result)
       if (!result[0]) {
       console.log('Login falied')
       return res.render('login')
@@ -67,8 +66,10 @@ router.post("/login", sessionChecker,(req, res) => {
       } else {
         let validUser = compareSync(value.log_passwords, result[0].passwords);
         if (validUser) {
-          req.session.user = email
-          let jsonwebtoken = sign({ result: result[0] }, process.env.JWT_SECRET, {
+          let username = result[0].first_name + ' ' + result[0].last_name;
+          req.session.user = email,
+          req.session.name = username
+          let jsonwebtoken = sign({ result: result[0]  }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPAIRED,
           });
           res.cookie('token', jsonwebtoken, {
@@ -88,23 +89,28 @@ router.post("/login", sessionChecker,(req, res) => {
 
 // All Dashboard Routers.............
 
-router.get("/dashboard",authanticateUser, (req, res) => {
-  res.render("dashboard");
+router.get("/dashboard",authanticateUser, tokenAuthenticate,(req, res) => {
+return res.render("dashboard", {"username": req.session.name});
 });
 
-router.post('/logout', (req,res)=>{
+router.post('/logout',(req,res)=>{
   if (req.session.user) {
-    req.session.destroy((err)=> {
-      if (err) {
-        console.log(err)
-      }
-    })
+    req.session.destroy()
     res.clearCookie()
+    res.cookie('token', '', {maxAge: 1})
     return res.redirect("/login");
   } else { 
-  return res.render('dashboard')
+   res.render('dashboard')
   }
 })
+
+// Profile Update section .................
+router.get('/profile_update',authanticateUser,tokenAuthenticate,(req,res)=>{
+  return res.render('profilepic', {"username": req.session.name})
+})
+
+//..............................0.................................
+
 
 function sessionChecker(req,res,next) {
   if (req.session.user) {
@@ -119,6 +125,22 @@ function authanticateUser(req,res,next) {
     return res.redirect('/login')
   } else {
     next()
+  }
+}
+
+function tokenAuthenticate(req,res,next) {
+  let token = req.cookies.token
+  if (token) {
+    verify(token, process.env.JWT_SECRET,(err,decoded)=>{
+      if (decoded) {
+        req.session.name;
+        next()
+      } else {
+        return res.redirect('/login');
+      }
+    })
+  } else {
+    return res.redirect('/login')    
   }
 }
 
