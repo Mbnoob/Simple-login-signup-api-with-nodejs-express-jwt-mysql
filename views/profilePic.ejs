@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,13 +10,10 @@
     <link rel="stylesheet" href="/styleSheet/profilePic.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         crossorigin="anonymous" />
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
-        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+    
 </head>
+
 <body>
     <div class="nav_bar">
         <nav class="navbar navbar-light fixed-top pt-3 pb-3" style="background-color: #48cae4;">
@@ -25,11 +23,11 @@
             <ul class="" style="width: 13%; margin: inherit;">
                 <li class="nav-item dropdown" style="list-style-type: none; color: #303a4e; font-size: 16px;">
                     <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                        <% if (username) { %>
-                            <%= username %>
-                                <% }else {%>
-                                    Profile
-                                    <% } %>
+                        <% if (typeof result != undefined) { %>
+                            <% result.forEach((e) => { %>
+                                <%= e.first_name + " "+ e.last_name %>
+                          <%  }); %>
+                    <%  } %> 
                     </a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" style="color: #303a4e;" href="#">change Password</a>
@@ -45,47 +43,120 @@
     </div>
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header" style="display: flex; justify-content: center; align-items: center;">
-                <i class="bi bi-exclamation-triangle-fill" style="padding: 0px 5px 0px; color: red;"></i>
-              <h5 class="modal-title" id="exampleModalLabel">Alert</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+            <div class="modal-content">
+                <div class="modal-header" style="display: flex; justify-content: center; align-items: center;">
+                    <i class="bi bi-exclamation-triangle-fill" style="padding: 0px 5px 0px; color: red;"></i>
+                    <h5 class="modal-title" id="exampleModalLabel">Alert</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure, You want to Logout !
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <form action="/logout" method="POST">
+                        <input type="submit" value="Yes" id="exampleModal" class="btn btn-danger">
+                    </form>
+                </div>
             </div>
-            <div class="modal-body">
-              Are you sure, You want to Logout !
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <form action="/logout" method="POST" >
-                <input type="submit" value="Yes" id="exampleModal" class="btn btn-danger">
-            </form>
-            </div>
-          </div>
         </div>
-      </div>
+    </div>
     <div class="main">
         <div class="container">
             <div class="card-container">
-                <img class="round" src="https://www.citypng.com/public/uploads/preview/free-round-flat-male-portrait-avatar-user-icon-png-11639648873oplfof4loj.png" alt="user" />
-                <h3><% if (username) { %>
-                    <%= username %>
-                <%  } else {%></h3>
-                    username
-                <% } %>
-                <h6>New York</h6>
+                
+                <% if (typeof result != undefined) { %>
+                    <% result.forEach((e) => { %>
+                    <span class="pro"><%= e.role %></span>
+                    <img class="round" src='\uploads\<%= e.file_name %>' alt="user" />
+                    <h3> <%= e.first_name + " "+ e.last_name %></h3>
+                    <h6> <%= e.email_id %></h6>
+              <%  }); %>
+        <%  } %>
                 <p>User interface designer and <br/> front-end developer</p>
                 <div class="buttons">
-                    <label class="custom-file-upload">
-                        <input type="file"/>
-                        Upload Profile Image
-                    </label>
+                   
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2">
+                        <i class="bi bi-pencil-square pr-2"></i>Edit Profile
+                      </button>
                 </div>
+                <div class="modal" id="exampleModal2" tabindex="-1">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" style="color: #444a57;">Edit Profile Details</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/profile_update/<%= userId %>" method="post" enctype="multipart/form-data">                              
+                                <div class="profile-pic-div">
+                                    <img src="/src/picture.jpg" id="photo">
+                                    <div class="inbox">
+                                        <input type="file" name="file" id="file" required>
+                                        <label for="file" id="uploadBtn">Choose Photo</label>
+                                    </div>
+                                </div>
+                            
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <input type="submit" class="btn btn-success" value="Submit">
+                                </div>
+                            </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
             </div>
         </div>
 
     </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
 </body>
+<script>
+    const imgDiv = document.querySelector('.profile-pic-div');
+const img = document.querySelector('#photo');
+const file = document.querySelector('#file');
+const uploadBtn = document.querySelector('#uploadBtn');
+
+//if user hover on img div 
+
+imgDiv.addEventListener('mouseenter', function(){
+    uploadBtn.style.display = "block";
+});
+
+//if we hover out from img div
+
+imgDiv.addEventListener('mouseleave', function(){
+    uploadBtn.style.display = "none";
+});
+
+//lets work for image showing functionality when we choose an image to upload
+
+//when we choose a foto to upload
+
+file.addEventListener('change', function(){
+    const choosedFile = this.files[0];
+
+    if (choosedFile) {
+
+        const reader = new FileReader(); //FileReader is a predefined function of JS
+
+        reader.addEventListener('load', function(){
+            img.setAttribute('src', reader.result);
+        });
+
+        reader.readAsDataURL(choosedFile);
+    }
+});
+</script>
 </html>

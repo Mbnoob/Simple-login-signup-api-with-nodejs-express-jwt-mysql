@@ -19,9 +19,13 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }))
+app.use(function(req, res, next){
+  res.locals.message= req.flash();
+  next();
+});
 
 //All Routers...............
-const router = require("./router/router")
+const router = require("./router/router");
 
 //All Handellers......
 app.use("/", router);

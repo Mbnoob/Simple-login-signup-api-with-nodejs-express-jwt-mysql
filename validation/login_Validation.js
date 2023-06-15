@@ -14,6 +14,6 @@ const log_schema = joi.object({
     .string()
     .regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)
     .required(),
-});
+}).unknown(true);
 
 module.exports = log_schema;

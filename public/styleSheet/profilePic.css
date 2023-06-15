@@ -1,53 +1,56 @@
 @import url("https://fonts.googleapis.com/css2?family=Baumans&family=Kanit:wght@600&display=swap");
 
 * {
-    box-sizing: border-box;
-    margin: 0px;
-    padding: 0px;
-    font-family: "Kanit", sans-serif;
+	box-sizing: border-box;
+	margin: 0px;
+	padding: 0px;
+	font-family: "Kanit", sans-serif;
 }
-.container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+.container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
+
 body {
-    background: linear-gradient(90deg,
-            hsla(197, 100%, 63%, 1) 0%,
-            hsla(294, 100%, 55%, 1) 100%);
+	background: linear-gradient(90deg,
+			hsla(197, 100%, 63%, 1) 0%,
+			hsla(294, 100%, 55%, 1) 100%);
 }
 
 .main {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+	min-height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
-h1{
-    text-align: center;
-    color: #303a4e;
+h1 {
+	text-align: center;
+	color: #303a4e;
 }
 
-.dropdown-menu a:hover{
-    background-color: rgb(170, 231, 255);
+.dropdown-menu a:hover {
+	background-color: rgb(170, 231, 255);
 }
 
-.logout{
-    display: flex;
-    justify-content: center;
-    align-items: baseline;
+.logout {
+	display: flex;
+	justify-content: center;
+	align-items: baseline;
 }
+
 .logout input {
-    outline: none;
-    border: none;
-    border-radius: 10px;
-    padding: 10px;
-    background-color: skyblue;
-    cursor: pointer;
-    color: #303a4e;
-    font-size: 16px;
-    transition: all .2s ;
+	outline: none;
+	border: none;
+	border-radius: 10px;
+	padding: 10px;
+	background-color: skyblue;
+	cursor: pointer;
+	color: #303a4e;
+	font-size: 16px;
+	transition: all .2s;
 }
 
 h3 {
@@ -56,7 +59,7 @@ h3 {
 
 h6 {
 	margin: 5px 0;
-	text-transform: uppercase;
+	text-transform: lowercase;
 }
 
 p {
@@ -67,7 +70,7 @@ p {
 .card-container {
 	background-color: #231E39;
 	border-radius: 5px;
-	box-shadow: 0px 10px 20px -10px rgba(0,0,0,0.75);
+	box-shadow: 0px 10px 20px -10px rgba(0, 0, 0, 0.75);
 	color: #B3B8CD;
 	padding-top: 30px;
 	position: relative;
@@ -80,7 +83,7 @@ p {
 	color: #231E39;
 	background-color: #FEBB0B;
 	border-radius: 3px;
-	font-size: 14px;
+	font-size: 12px;
 	font-weight: bold;
 	padding: 3px 7px;
 	position: absolute;
@@ -131,25 +134,95 @@ button.primary.ghost {
 	padding: 7px;
 }
 
-.card-container img{
-    width: 30%;
+.card-container img {
+	width: 35%;
 }
 
-.card-container .buttons{
-    padding: 28px;
+.card-container .buttons {
+	padding: 28px;
 }
 
-input[type="file"] {
-    display: none;
+/* input[type="file"] {
+	display: none;
+} */
+
+.card-container .profile_pic {
+	display: flex;
+	justify-content: center;
 }
 
 .custom-file-upload {
-    border: 1px solid #ccc;
-    display: inline-block;
-    padding: 6px 12px;
-    cursor: pointer;
+	border: 1px solid #ccc;
+	display: inline-block;
+	padding: 6px 12px;
+	cursor: pointer;
 }
-.custom-file-upload:hover{
-    background-color: #303a4e;
-    color: antiquewhite;
+
+.custom-file-upload:hover {
+	background-color: #303a4e;
+	color: antiquewhite;
 }
+
+.profilepic {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	width: 125px;
+	height: 125px;
+	border-radius: 50%;
+	overflow: hidden;
+	background-color: #111;
+}
+
+.profilepic:hover .profilepic__content {
+	opacity: 1;
+}
+
+.profilepic:hover .profilepic__image {
+	opacity: .5;
+}
+
+.profilepic__image {
+	object-fit: cover;
+	opacity: 1;
+	transition: opacity .2s ease-in-out;
+}
+
+.profilepic__content {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	color: white;
+	opacity: 0;
+	transition: opacity .2s ease-in-out;
+}
+
+.profilepic__icon {
+	color: white;
+	padding-bottom: 8px;
+}
+
+.fas {
+	font-size: 20px;
+}
+
+.profilepic__text {
+	text-transform: uppercase;
+	font-size: 12px;
+	width: 50%;
+	text-align: center;
+}
+
+/* new */
+
+#file {
+	display: none;
+}
+
