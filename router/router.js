@@ -121,13 +121,13 @@ router.get('/profile_update/:id',authanticateUser,tokenAuthenticate, (req,res)=>
           return res.status(406).redirect("/dashboard");
         } else {
           result = results
-          // console.log(result, '1')
+          console.log(result, '1')
           return res.render("profilePic", { result, "userId": req.session.userId });
         }
       })
     } else {
       result = results
-      // console.log(result, '2')
+      console.log(result, '2')
       return res.render("profilePic", { result, "userId": req.session.userId });
     }
   })
@@ -138,31 +138,37 @@ router.post('/profile_update/:id',authanticateUser, tokenAuthenticate, upload.si
     let userid = req.params.id
     let file_name = req.file.filename;
     let file_type = req.file.mimetype;
+
     let file_size = req.file.size;
+    let fileinKB = (file_size / 1024).toFixed(2); // to KB
+    let file;
+    if (fileinKB < 1024) {
+      file = fileinKB + " KB";
+    } else {
+      file = (file_size / (1024 * 1024)).toFixed(2) + " MB";
+    }
+
     let file_locations = req.file.destination;
     let file_path = req.file.path;
-    let id = [];
 
     try {
-      myconnections.query('SELECT * FROM `profile_images`',(err, results)=> {
-        id.push(results[0].id)
+      myconnections.query('SELECT * FROM `profile_images` WHERE user_id =?',[req.params.id],(err, results)=> {
         if (err) {
           console.log(err)
           return res.status(406).redirect("/dashboard");
         } 
        if (!results[0]){
-          myconnections.query('INSERT INTO `profile_images`(`user_id`, `file_name`, `file_type`, `file_size`, `file_locations`, `file_path`) VALUES (?, ?, ?, ?, ?, ?)',[userid, file_name, file_type, file_size, file_locations, file_path], (err, response)=>{
+          myconnections.query('INSERT INTO `profile_images`(`user_id`, `file_name`, `file_type`, `file_size`, `file_locations`, `file_path`) VALUES (?, ?, ?, ?, ?, ?)',[userid, file_name, file_type, file, file_locations, file_path], (err, response)=>{
             if (err) {
               console.log(err)
               return res.status(406).redirect("/dashboard"); 
             } else {
-            id.push(response.insertId)
             return res.redirect('/dashboard') 
             }
           })
         } else {
           // console.log('update')
-          myconnections.query('UPDATE `profile_images` SET `user_id`=?,`file_name`=?,`file_type`=?,`file_size`=?,`file_locations`=?,`file_path`=?,`updated_at`=CURRENT_TIMESTAMP WHERE id =?',[userid, file_name, file_type, file_size, file_locations, file_path, id],(err,results)=>{
+          myconnections.query('UPDATE `profile_images` SET `user_id`=?,`file_name`=?,`file_type`=?,`file_size`=?,`file_locations`=?,`file_path`=?,`updated_at`=CURRENT_TIMESTAMP WHERE user_id =?',[userid, file_name, file_type, file, file_locations, file_path, userid],(err,results)=>{
             if (err) {
               console.log(err)
               return res.status(406).redirect("/dashboard");

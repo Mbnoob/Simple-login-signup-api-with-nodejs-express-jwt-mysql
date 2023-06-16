@@ -69,12 +69,19 @@
                 
                 <% if (typeof result != undefined) { %>
                     <% result.forEach((e) => { %>
-                    <span class="pro"><%= e.role %></span>
-                    <img class="round" src='\uploads\<%= e.file_name %>' alt="user" />
+                        <% if (e.file_name && result[0].role) { %>
+                            <span class="pro"><%= e.role %></span>
+                            <img class="round" src='\uploads\<%= e.file_name %>' alt="user" />
+                            <% } else { %>
+                                <span class="pro">Undefined</span>
+                                <img class="round" src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJxA5cTf-5dh5Eusm0puHbvAhOrCRPtckzjA&usqp=CAU' alt="user" />
+                       <%  } %>
+                    
                     <h3> <%= e.first_name + " "+ e.last_name %></h3>
                     <h6> <%= e.email_id %></h6>
               <%  }); %>
         <%  } %>
+        
                 <p>User interface designer and <br/> front-end developer</p>
                 <div class="buttons">
                    
