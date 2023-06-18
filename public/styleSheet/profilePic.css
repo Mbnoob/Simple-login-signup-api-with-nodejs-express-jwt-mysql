@@ -1,10 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Baumans&family=Kanit:wght@600&display=swap");
+/* @import url('https://fonts.googleapis.com/css2?family=Signika+Negative:wght@&display=swap'); */
 
 * {
 	box-sizing: border-box;
 	margin: 0px;
 	padding: 0px;
-	font-family: "Kanit", sans-serif;
+	font-family: 'poppins', sans-serif;
+	letter-spacing: .1px;
+    font-weight: bold;
 }
 
 .container {
@@ -79,6 +81,14 @@ p {
 	text-align: center;
 }
 
+#h6{
+	color: #f767b6;
+}
+
+.container .card-container h3{
+	margin-top: 10px;
+}
+
 .card-container .pro {
 	color: #231E39;
 	background-color: #FEBB0B;
@@ -136,6 +146,11 @@ button.primary.ghost {
 
 .card-container img {
 	width: 35%;
+}
+
+.profile-pic-div img {
+	width: 28%;
+	border-radius: 50%;
 }
 
 .card-container .buttons {
@@ -226,3 +241,35 @@ button.primary.ghost {
 	display: none;
 }
 
+/* Model Update Section Css */
+
+form .inbox {
+	padding: 8px;
+	text-align: center;
+}
+
+form .inbox input {
+	width: 350px;
+	border-radius: 16px;
+	border: none;
+	outline: none;
+	padding: 13px;
+	background: #bfdbf7;
+	color: #303a4e;
+	font-size: 15px;
+}
+
+::placeholder {
+	opacity: 60%;
+}
+
+/* Notification (err & Success) Message  */
+
+#notification {
+	position: absolute;
+	width: 34%;
+	z-index: 10;
+	top: 12%;
+	left: 31.8%;
+	display: none;
+}

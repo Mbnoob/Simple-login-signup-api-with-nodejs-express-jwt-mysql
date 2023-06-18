@@ -41,6 +41,16 @@
             </ul>
         </nav>
     </div>
+
+    <!-- notification alert  -->
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="notification">
+        <i class="bi bi-exclamation-circle-fill"></i><strong>Alert!</strong> You should check in on some of those fields below
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -69,16 +79,19 @@
                 
                 <% if (typeof result != undefined) { %>
                     <% result.forEach((e) => { %>
-                        <% if (e.file_name && result[0].role) { %>
-                            <span class="pro"><%= e.role %></span>
+                        <% if (e.file_name) { %>
                             <img class="round" src='\uploads\<%= e.file_name %>' alt="user" />
-                            <% } else { %>
-                                <span class="pro">Undefined</span>
+                            <% }else { %>
                                 <img class="round" src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJxA5cTf-5dh5Eusm0puHbvAhOrCRPtckzjA&usqp=CAU' alt="user" />
+                            <% } %>
+                            <% if (e.role) { %>
+                                <span class="pro"><%= e.role %></span>
+                        <%  }else { %>
+                                <span class="pro">Undefined</span>
                        <%  } %>
-                    
-                    <h3> <%= e.first_name + " "+ e.last_name %></h3>
-                    <h6> <%= e.email_id %></h6>
+                    <h3>Name: <%= e.first_name + " "+ e.last_name %></h3>
+                    <h6 id="h6"> <%= e.email_id %></h6>
+                    <h6> <%= e.dob %> </h6>
               <%  }); %>
         <%  } %>
         
@@ -101,10 +114,32 @@
                         <div class="modal-body">
                             <form action="/profile_update/<%= userId %>" method="post" enctype="multipart/form-data">                              
                                 <div class="profile-pic-div">
-                                    <img src="/src/picture.jpg" id="photo">
+                                    <% if (typeof result != undefined) { %>
+                                        <% if (result[0].file_name) { %>
+                                            <img src="\uploads\<%= result[0].file_name %>" id="photo" >
+                                            <% }else { %>
+                                            <img src="/src/profile.png" id="photo" >
+                                            <% } %>
+                                            <% }else { %>
+                                            <img src="/src/profile.png" id="photo" >
+                                    <% } %>
+
                                     <div class="inbox">
-                                        <input type="file" name="file" id="file" required>
+                                        <input type="file" name="file" id="file" >
                                         <label for="file" id="uploadBtn">Choose Photo</label>
+                                    </div>
+                                    <div class="inbox">
+                                        <input type="text" placeholder="Enter Your First Name" name="First_name" value="<%= (typeof result != undefined)? result[0].first_name:'' %>">
+                                    </div>
+                                    <div class="inbox">
+                                        <input type="text" placeholder="Enter Your Last name" name="Last_name" value="<%= (typeof result != undefined)? result[0].last_name:'' %>">
+                                    </div>
+                                    <div class="inbox">
+                                        <input placeholder="Enter Your Date of Birth" class="textbox-n" type="text"
+                                            onfocus="(this.type='date')" name="dob" value="<%= (typeof result != undefined)? result[0].dob:'' %>">
+                                    </div>
+                                    <div class="inbox">
+                                        <input type="text" placeholder="Enter Your Email Id" name="email_id" value="<%= (typeof result != undefined)? result[0].email_id:'' %>">
                                     </div>
                                 </div>
                             
@@ -131,19 +166,19 @@
 </body>
 <script>
     const imgDiv = document.querySelector('.profile-pic-div');
-const img = document.querySelector('#photo');
-const file = document.querySelector('#file');
-const uploadBtn = document.querySelector('#uploadBtn');
+    const img = document.querySelector('#photo');
+    const file = document.querySelector('#file');
+    const uploadBtn = document.querySelector('#uploadBtn');
 
 //if user hover on img div 
 
-imgDiv.addEventListener('mouseenter', function(){
+    imgDiv.addEventListener('mouseenter', function(){
     uploadBtn.style.display = "block";
 });
 
 //if we hover out from img div
 
-imgDiv.addEventListener('mouseleave', function(){
+    imgDiv.addEventListener('mouseleave', function(){
     uploadBtn.style.display = "none";
 });
 

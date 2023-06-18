@@ -26,7 +26,8 @@
             <ul class="" style="width: 13%; margin: inherit;">
                 <li class="nav-item dropdown" style="list-style-type: none; color: #303a4e; font-size: 16px;">
                     <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                        <% if (username) { %>
+                        
+                        <% if (typeof username != undefined) { %>
                             <%= username %>
                                 <% }else {%>
                                     Profile
@@ -36,8 +37,12 @@
                         <% if(typeof userId != undefined){ %>
                             <a class="dropdown-item" style="color: #303a4e;" href="/profile_update/<%= userId %>">Profile Upload</a>
                             <% }else { %>
-                                <a class="dropdown-item" style="color: #303a4e;" href="/profile_update/edit/">Profile Upload</a>
+                                <% if (typeof result != undefined) { %>
+                                <% result.forEach((e) => { %>
+                                    <a class="dropdown-item" style="color: #303a4e;" href="/profile_update/<%= e.userId %>">Profile Upload</a>
+                          <%  }); %>
                         <% } %>
+                        <%  } %>
                         <a class="dropdown-item" style="color: #303a4e;" href="/changePassword">change Password</a>
                         <div class="dropdown-divider"></div>
                         <div class="logout">

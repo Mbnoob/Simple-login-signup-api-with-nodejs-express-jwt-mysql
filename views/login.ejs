@@ -26,8 +26,11 @@
                 <h1>Login</h1>
                 <% if(typeof error!='undefined' ){ %>
                     <% error.details.forEach((e)=> { %>
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert" id="close" ">
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert" id="close">
                             <%= e.message %>!
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
                         <% }); %>
                             <% } %>
