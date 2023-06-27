@@ -1,4 +1,4 @@
-/* @import url("https://fonts.googleapis.com/css2?family=Baumans&family=Kanit:wght@600&display=swap"); */
+
 
 * {
     box-sizing: border-box;
@@ -65,6 +65,7 @@ form .button {
 #login {
     padding: 8px;
     width: 100px;
+    height: fit-content;
     margin: 5px;
     background-color: skyblue;
     border: none;
@@ -102,11 +103,3 @@ button{
     width: 40px;
     height: 37px;
 }
-
-/* .log_container form .alert {
-    position: absolute;
-    z-index: 100;
-    top: 10%;
-    left: 20%;
-    right: 20%;
-} */

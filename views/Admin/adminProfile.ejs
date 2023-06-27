@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Update</title>
     <link rel="icon" type="image/png" sizes="32x32" href="/src/favicon.png">
-    <link rel="stylesheet" href="/styleSheet/profilePic.css" />
+    <link rel="stylesheet" href="/styleSheet/adminProfile.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
@@ -17,14 +17,14 @@
 <body>
     <div class="nav_bar">
         <nav class="navbar navbar-light fixed-top pt-3 pb-3" style="background-color: #48cae4;">
-            <a class="navbar-brand pl-5" href="/dashboard" style="color: #303a4e;">
+            <a class="navbar-brand pl-5" href="/admindashboard" style="color: #303a4e;">
                 <img src="/src/logo.png" style="height: 33px;" alt="Company logo">
             </a>
             <ul class="" style="width: 13%; margin: inherit;">
                 <li class="nav-item dropdown" style="list-style-type: none; color: #303a4e; font-size: 16px;">
                     <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                        <% if (typeof result != undefined) { %>
-                            <% result.forEach((e) => { %>
+                        <% if (typeof results != undefined) { %>
+                            <% results.forEach((e) => { %>
                                 <%= e.first_name + " "+ e.last_name %>
                           <%  }); %>
                     <%  } %> 
@@ -42,15 +42,6 @@
         </nav>
     </div>
 
-    <!-- notification alert  -->
-    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="notification">
-        <i class="bi bi-exclamation-circle-fill"></i><strong>Alert!</strong> You should check in on some of those fields below
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-
-
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -66,7 +57,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <form action="/logout" method="POST">
+                    <form action="/admin/logout" method="POST">
                         <input type="submit" value="Yes" id="exampleModal" class="btn btn-danger">
                     </form>
                 </div>
@@ -77,8 +68,8 @@
         <div class="container">
             <div class="card-container">
                 
-                <% if (typeof result != undefined) { %>
-                    <% result.forEach((e) => { %>
+                <% if (typeof results != undefined) { %>
+                    <% results.forEach((e) => { %>
                         <% if (e.file_name) { %>
                             <img class="round" src='\uploads\<%= e.file_name %>' alt="user" />
                             <% }else { %>
@@ -97,6 +88,7 @@
         
                 <p>User interface designer and <br/> front-end developer</p>
                 <div class="buttons">
+                   
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2">
                         <i class="bi bi-pencil-square pr-2"></i>Edit Profile
                       </button>
@@ -111,11 +103,11 @@
                           </button>
                         </div>
                         <div class="modal-body">
-                            <form action="/profile_update/<%= userId %>" method="post" enctype="multipart/form-data">                              
+                            <form action="/adminProfile/update/<%= userId %>" method="post" enctype="multipart/form-data">                              
                                 <div class="profile-pic-div">
-                                    <% if (typeof result != undefined) { %>
-                                        <% if (result[0].file_name) { %>
-                                            <img src="\uploads\<%= result[0].file_name %>" id="photo" >
+                                    <% if (typeof results != undefined) { %>
+                                        <% if (results[0].file_name) { %>
+                                            <img src="\uploads\<%= results[0].file_name %>" id="photo" >
                                             <% }else { %>
                                             <img src="/src/profile.png" id="photo" >
                                             <% } %>
@@ -128,17 +120,17 @@
                                         <label for="file" id="uploadBtn">Choose Photo</label>
                                     </div>
                                     <div class="inbox">
-                                        <input type="text" placeholder="Enter Your First Name" name="First_name" value="<%= (typeof result != undefined)? result[0].first_name:'' %>">
+                                        <input type="text" placeholder="Enter Your First Name" name="First_name" value="<%= (typeof results != undefined)? results[0].first_name:'' %>">
                                     </div>
                                     <div class="inbox">
-                                        <input type="text" placeholder="Enter Your Last name" name="Last_name" value="<%= (typeof result != undefined)? result[0].last_name:'' %>">
+                                        <input type="text" placeholder="Enter Your Last name" name="Last_name" value="<%= (typeof results != undefined)? results[0].last_name:'' %>">
                                     </div>
                                     <div class="inbox">
                                         <input placeholder="Enter Your Date of Birth" class="textbox-n" type="text"
-                                            onfocus="(this.type='date')" name="dob" value="<%= (typeof result != undefined)? result[0].dob:'' %>">
+                                            onfocus="(this.type='date')" name="dob" value="<%= (typeof results != undefined)? results[0].dob:'' %>">
                                     </div>
                                     <div class="inbox">
-                                        <input type="text" placeholder="Enter Your Email Id" name="email_id" value="<%= (typeof result != undefined)? result[0].email_id:'' %>">
+                                        <input type="text" placeholder="Enter Your Email Id" name="email_id" value="<%= (typeof results != undefined)? results[0].email_id:'' %>">
                                     </div>
                                 </div>
                             

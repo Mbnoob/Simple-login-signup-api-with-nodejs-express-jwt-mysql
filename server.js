@@ -8,7 +8,6 @@ const cookieParser = require('cookie-parser')
 const flash = require('connect-flash');
 
 app.set("view engine", "ejs");
-app.use(flash());
 app.use(cookieParser())
 app.use(body_parser.json());
 app.use(express.static(path.join(__dirname, "public")));
@@ -18,9 +17,13 @@ app.use(session({
   secret: process.env.SESSION_KEY,
   resave: true,
   saveUninitialized: true
-}))
+}));
+
+app.use(flash());
 app.use(function(req, res, next){
-  res.locals.message= req.flash();
+  res.locals.sucess = req.flash('sucess');
+  res.locals.errors = req.flash('errors');
+  res.locals.titles = req.flash('titles');
   next();
 });
 

@@ -1,0 +1,89 @@
+* {
+    box-sizing: border-box;
+    margin: 0px;
+    padding: 0px;
+    font-family: 'poppins', sans-serif;
+    letter-spacing: .1px;
+    font-weight: bold;
+}
+
+*::-webkit-scrollbar {
+    width: 13px;
+	background: linear-gradient(180deg,
+    hsla(197, 100%, 63%, 1) 1%,
+    hsla(294, 100%, 55%, 1) 100%);
+}
+
+*::-webkit-scrollbar-track
+{
+	background: transparent;
+	border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	background:  linear-gradient(180deg, hsla(179, 67%, 66%, 1) 0%, hsla(238, 74%, 61%, 1) 100%)
+}
+
+body {
+    background: linear-gradient(90deg,
+            hsla(197, 100%, 63%, 1) 0%,
+            hsla(294, 100%, 55%, 1) 100%);
+}
+
+.main {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    text-align: center;
+    color: #303a4e;
+}
+
+.logout {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+}
+
+#logout-btn input {
+    outline: none;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: skyblue;
+    cursor: pointer;
+    color: #303a4e;
+    font-size: 16px;
+    transition: all .2s;
+}
+
+.dropdown-menu a:hover {
+    background-color: rgb(170, 231, 255);
+}
+
+.logout input:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    color: #ff4a08;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 130px;
+}
+
+
+.container .table {
+    box-shadow: 0px 10px 20px -10px rgba(0, 0, 0, 0.75);
+}
+
+#element {
+    color: #303a4e;
+}

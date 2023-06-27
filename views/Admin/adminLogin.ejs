@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Admin Login</title>
     <link rel="icon" type="image/png" sizes="32x32" href="/src/favicon.png">
     <link rel="stylesheet" href="/styleSheet/login.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
@@ -16,17 +16,17 @@
 
 <body>
 
-    <% let errors_msgs = [] %>
-    <% let titles_msgs = [] %>
+    <% let adminLogin_error = [] %>
+    <% let admintitles_msgs = [] %>
    <%  if(errors && errors != '' && titles){ %>
-            <% errors_msgs.push(errors) %>
-            <% titles_msgs.push(titles) %>
+            <% adminLogin_error.push(errors) %>
+            <% admintitles_msgs.push(titles) %>
         <% } %>
 
     <div class="main">
         <div class="log_container">
-            <form action="/login" method="post">
-                <h1>Login</h1>
+            <form action="/admin/login" method="post">
+                <h1>Admin Login</h1>
                         <div class=" inbox">
                             <input type="text" placeholder="Enter Your Email-id" name="log_email">
                         </div>
@@ -37,8 +37,7 @@
                         <div class="button">
                             <input type="submit" value="Login" id="login">
                             <div class="regLink">
-                                <a href="/reg" target="_blank">You Don't Have An Account!</a><br>
-                                <a href="/admin/login" target="_blank">If you are admin !</a><br>
+                                <a href="/login" target="_blank">If you are User !</a><br>
                                 <a href="#">Forget Your Passwords!</a>
                             </div>
                         </div>
@@ -57,8 +56,8 @@
     <script src="https://cdn.jsdelivr.net/npm/simple-notify@0.5.5/dist/simple-notify.min.js"></script>
     <script>
          $(window).on("load",function () {
-            let errorsAlerts = "<%= errors_msgs %>";
-            let titles = "<%= titles_msgs %>";
+            let errorsAlerts = "<%= adminLogin_error %>";
+            let titles = "<%= admintitles_msgs %>";
             if (errorsAlerts) {
                 new Notify({
                 status: 'error',
