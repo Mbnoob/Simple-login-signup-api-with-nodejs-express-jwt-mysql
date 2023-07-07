@@ -78,19 +78,26 @@
     </div>
 
     <% let success_message = [] %>
+    <% let titles_msg1 = [] %>
     <% let errors_message = [] %>
-    <% let titles_msg = [] %>
-
-    <% if(sucess && sucess != '' || titles){ %>
-            <% success_message.push(sucess) %>    
-            <% titles_msg.push(titles) %>    
-    <% } %>
-
-    <% if(errors && errors != '' && titles ){ %>
+    
+    <% if(sucess != '' || titles){ %>
+        <% success_message.push(sucess) %>    
+        <% titles_msg1.push(titles) %>    
+        <% } %>
+        
+    <% let titles_msg2 = [] %>
+    <% if( errors && titles != ''){ %>
             <% errors_message.push(errors) %>
-            <% titles_msg.push(titles) %>
+            <% titles_msg2.push(titles) %>
         <% } %>
 
+        <% let lastIndex = 0; %>
+        <% result5.forEach((e,i) => { %>
+            <% if (e.is_deleted !==1 && e.statuses !== 'approved') { %>
+                <% lastIndex++ %>
+           <% } %>
+        <% }); %>
     <div class="main">
         <div class="container">
             <div class="right-section">
@@ -100,8 +107,8 @@
                 <img src="/src/bg.png" alt="Developer background image">
             </div>
             <div class="request">
-                    <button type="button" id="request_btn" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal5" data-toggle="tooltip" data-placement="right" title="To see your request progress"><img src="/src/question.png"> <span class="badge badge-light">9</span>
-                  </button>
+                <button type="button" id="request_btn" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal5" data-toggle="tooltip" data-placement="right" title="To see your request progress. You have Still <%=lastIndex %> Pending Request"><img src="/src/question.png"> <span class="badge badge-light"><%= lastIndex %></span>
+              </button>
             </div>
         </div>
   <!-- Modal -->
@@ -109,52 +116,98 @@
     <div class="modal-dialog" style="display: flex; justify-content: center;">
       <div class="modal-content" style="width: fit-content;">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel5">Request status</h5>
+          <h5 class="modal-title" id="exampleModalLabel5" style="color: #457b9d;">Request status</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-            <% if (typeof result5 != undefined) { %>
-                <% if (result5[0]) { %>
-                    <table class="table table-bordered" style="width: max-content;">
-                        <thead>
-                          <tr>
-                            <th scope="col">User Name</th>
-                            <th scope="col">Descriptions</th>
-                            <th scope="col">Total amounts</th>
-                            <th scope="col">Amounts</th>
-                            <th scope="col">Payments Date</th>
-                            <th scope="col">Request submit date</th>
-                            <th scope="col">Current Status</th>
-                          </tr>
-                        </thead>
-                        <% result5.forEach((e) => { %>
-                            <tbody>
-                                <tr>
-                                  <td><%= username %></td>
-                                  <td><%= e.descriptions %></td>
-                                  <td><%= e.total_amount %></td>
-                                  <td><%= e.amounts %></td>
-                                  <td><%= e.payments_date %></td>
-                                  <td><%= e.created_at.toLocaleDateString("es-CL") %></td>
-                                  <td><button class="btn btn-primary" disabled><%= e.statuses %></button></td>
-                                </tr>
-                              </tbody>
-                       <% }); %>
-                      </table>
-               <% } else { %>
-                    <h1>Not Request has found <i class="bi bi-emoji-frown-fill"></i></h1>
-               <% } %>
-              <% } %>
+          <% if (typeof result5 != undefined) { %>
+          <% if (result5[0]) { %>
+          <table class="table table-bordered" style="width: max-content;">
+            <thead>
+              <tr>
+                <th scope="col">Trns_id</th>
+                <th scope="col">User Name</th>
+                <th scope="col">Total amounts</th>
+                <th scope="col">Payments Date</th>
+                <th scope="col">Request submit date</th>
+                <th scope="col">Current Status</th>
+                <th scope="col">Edit</th>
+                <th scope="col">View</th>
+              </tr>
+            </thead>
+            <% result5.forEach((e,i) => { %>
+            <tbody>
+              <% if (e.is_deleted !== 1) { %>
+              <tr>
+                <td><%= e.id %></td>
+                <td><%= username %></td>
+                <td><%= e.total_amount %></td>
+                <td><%= e.payments_date %></td>
+                <td><%= e.created_at.toLocaleDateString("es-CL") %></td>
+                <td>
+                  <% if (e.statuses === 'approved') { %>
+                  <button class="btn btn-success" disabled><%= e.statuses %></button>
+                </td>
+                <% } else { %>
+                <button class="btn btn-primary" disabled><%= e.statuses %></button></td>
+                <% } %>
+                <td>
+                    <!-- for edit payment request -->
+                  <% if (e.statuses === 'pending') { %>
+                  <a href="/edit/request/<%= e.id %>"><button class="btn btn-warning" enable style="color: white; cursor: pointer;"><i class="bi bi-eye-fill"></i></button></a>
+                  <% } else { %>
+                  <button class="btn btn-warning" disabled style="color: white; cursor: no-drop;"><i class="bi bi-eye-fill"></i></button>
+                  <% } %>
+                </td>
+                <td>
+                    <!-- for delete payment request -->
+                  <% if (e.statuses === 'pending') { %>
+                    <button class="btn btn-danger" type="button" onclick="confirmDelete('<%= e.id %>')"><i class="bi bi-trash-fill"></i></button>
+                    <% } else { %>
+                    <button class="btn btn-danger" disabled style="color: white; cursor: no-drop;"><i class="bi bi-trash-fill"></i></button>
+                    <% } %>
+                </td>
+              </tr>
+            </tbody>
+            <% } %>
+            <% }); %>
+          </table>
+          <% } else { %>
+          <h1>Not Request has found <i class="bi bi-emoji-frown-fill"></i></h1>
+          <% } %>
+      <% } %>  
+      <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this transaction?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <form id="deleteForm" action="/delete/request" method="POST">
+                        <input type="hidden" id="deleteTransactionId" name="transactionId">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="modal-footer" style="display: flex; justify-content: space-between;">
+      </div>    
+ </div>
+    <div class="modal-footer" style="display: flex; justify-content: space-between;">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-danger">Cancel Request</button>
         </div>
       </div>
     </div>
   </div>
+
     </div>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -164,8 +217,9 @@
         crossorigin="anonymous"></script>
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-notify@0.5.5/dist/simple-notify.min.js"></script>
-    <script>
 
+
+<script>
 // Type Js ...........................................
         let typed = new Typed('#element', {
             strings: ['<i>Full-stack Web Development</i>', '<i>Figma Designing<i/>', '<i>Web Designing<i/>'],
@@ -180,16 +234,21 @@ $(function() {
   $('#request_btn').tooltip();
 });
 
+function confirmDelete(transactionId) {
+      $('#deleteConfirmationModal').modal('show');
+      document.getElementById('deleteTransactionId').value = transactionId;
+};
 // Toaster Notification................................
         $(window).on("load", function(){
             let sucessAlerts = "<%=success_message %>";
             let errorsAlerts = "<%=errors_message %>";
-            let titles = "<%= titles_msg %>";
+            let titles1 = "<%= titles_msg1 %>";
+            let titles2 = "<%= titles_msg2 %>";
 
             if (sucessAlerts) {
                 new Notify({
                 status: 'success',
-                title: (titles != '')?titles:'<%= username %>',
+                title: (titles1 != '')?titles1:'<%= username %>',
                 text: sucessAlerts,
                 effect: 'slide',
                 speed: 300,
@@ -207,7 +266,7 @@ $(function() {
             } else if (errorsAlerts){
                new Notify({
                 status: 'error',
-                title: titles,
+                title: titles2,
                 text: errorsAlerts,
                 effect: 'slide',
                 speed: 500,
@@ -224,7 +283,22 @@ $(function() {
             });
             };     
         });
-        
+// ckeckbox function....................
+    // function updateSelectedTransactions(checkbox) {
+    //     let checkboxes = document.getElementsByName('transactionIds')
+    //     checkboxes.forEach((item) => {
+    //     if (item !== checkbox) item.checked = false
+    
+    //     const transactionId = item.value;
+    //     const selectedTransactions = document.getElementById('selectedTransactions');
+   
+    //     if (item.checked) {
+    //         selectedTransactions.value = transactionId;
+    //     } else {
+    //         selectedTransactions.value = selectedTransactions.value.replace(transactionId + '');
+    //     }
+    // });
+    // };
     </script>
 </body>
 </html>

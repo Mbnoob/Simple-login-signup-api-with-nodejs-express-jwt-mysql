@@ -8,6 +8,25 @@
     font-weight: bold;
 }
 
+*::-webkit-scrollbar {
+    width: 13px;
+	background: linear-gradient(180deg,
+    hsla(197, 100%, 63%, 1) 1%,
+    hsla(294, 100%, 55%, 1) 100%);
+}
+
+*::-webkit-scrollbar-track
+{
+	background: transparent;
+	border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	background:  linear-gradient(180deg, hsla(179, 67%, 66%, 1) 0%, hsla(238, 74%, 61%, 1) 100%)
+}
+
 body {
     background: linear-gradient(90deg,
             hsla(197, 100%, 63%, 1) 0%,
@@ -144,8 +163,4 @@ h1 {
 
 .modal-body table tr th {
     color: hsla(294, 100%, 55%, 1);
-}
-
-.modal-header h5{
-    color: #457b9d;
 }

@@ -1,0 +1,101 @@
+
+* {
+	box-sizing: border-box;
+	margin: 0px;
+	padding: 0px;
+	font-family: 'poppins', sans-serif;
+	letter-spacing: .1px;
+    font-weight: bold;
+}
+
+.container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+body {
+	background: linear-gradient(90deg,
+			hsla(197, 100%, 63%, 1) 0%,
+			hsla(294, 100%, 55%, 1) 100%);
+}
+
+.main {
+	min-height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.dropdown-menu a:hover {
+	background-color: rgb(170, 231, 255);
+}
+
+.logout {
+	display: flex;
+	justify-content: center;
+	align-items: baseline;
+}
+
+.logout input {
+	outline: none;
+	border: none;
+	border-radius: 10px;
+	padding: 10px;
+	background-color: skyblue;
+	cursor: pointer;
+	color: #303a4e;
+	font-size: 16px;
+	transition: all .2s;
+}
+
+.card-container {
+	background-color: #231E39;
+	border-radius: 5px;
+	box-shadow: 0px 10px 20px -10px rgba(0, 0, 0, 0.75);
+	color: #B3B8CD;
+	padding-top: 30px;
+	top: 110px;
+	position: relative;
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+	width: 50%;
+    
+	text-align: center;
+}
+
+.container .card-container h3{
+	margin-top: 10px;
+}
+
+.card-container .round {
+	border: 1px solid #03BFCB;
+	border-radius: 50%;
+	padding: 7px;
+}
+
+.container .card-container{
+    padding-bottom: 30px;
+}
+
+.container .card-container form{
+    padding: 0px 30px;
+}
+
+.container .card-container form input{
+	height: 40px;
+	border-radius: 16px;
+	border: none;
+	outline: none;
+	padding: 13px;
+	background: #bfdbf7;
+	color: #303a4e;
+	font-size: 15px;
+}
+
+.container .card-container form h2{
+    color: #f767b6;
+    margin-bottom: 22px;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}

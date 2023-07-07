@@ -19,6 +19,7 @@
             <a class="navbar-brand pl-5" href="/admindashboard">
                 <img src="/src/logo.png" style="height: 33px;" alt="Company logo">
             </a>
+            
             <ul class="" style="width: 13%; margin: inherit;">
                 <li class="nav-item dropdown" style="list-style-type: none; color: #303a4e; font-size: 16px;">
                     <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
@@ -89,6 +90,12 @@
             <% errors_msg.push(errors) %>
         <% } %>
 
+        <% let adminrequestCount = 0; %>
+        <% response2.forEach((e,i) => { %>
+            <% if (e.statuses !== 'approved' && e.statuses !== 'rejected' ) { %>
+                <% adminrequestCount++ %>
+           <% } %>
+       <% }); %>
     <div class="main">
         <div class="container">
             <% if (typeof response !=undefined ) { %>
@@ -109,26 +116,15 @@
                         </thead>
 
                         <% response.forEach((e)=> { %>
+                            <% if (e.role !== 'Admin') { %>
                             <tbody>
                                 <tr>
-                                    <th scope="row">
-                                        <%= e.id %>
-                                    </th>
-                                    <td>
-                                        <%= e.first_name %>
-                                    </td>
-                                    <td>
-                                        <%= e.last_name %>
-                                    </td>
-                                    <td>
-                                        <%= e.dob %>
-                                    </td>
-                                    <td>
-                                        <%= e.email_id %>
-                                    </td>
-                                    <td>
-                                        <%= e.role %>
-                                    </td>
+                                    <th scope="row"><%= e.id %></th>
+                                    <td><%= e.first_name %></td>
+                                    <td><%= e.last_name %></td>
+                                    <td><%= e.dob %></td>
+                                    <td><%= e.email_id %></td>
+                                    <td><%= e.role %></td>
                                     <td class="text-end">
 
                                         <div class="d-flex flex-row justify-content-end gap-2">
@@ -140,15 +136,84 @@
                                     </td>
                                 </tr>
                             </tbody>
+                            <% } %>
                             <% }); %>
                                 <% }else{ %>
                                     <h1><i class="bi bi-exclamation-triangle-fill"></i>Nothing Data Found From Database
                                     </h1>
                                     <% } %>
                                         <% } %>
-                    </table>
+                                    </table>
+                                    <div class="request">
+         <button type="button" data-toggle="modal" data-target="#admin_requestModal" id="admin_requestbtn" class="icon-button" data-placement="right" title=" You have Total : <%= adminrequestCount %> pending request from User." >
+            <span class="material-icons"> <i class="bi bi-bell-fill" style="font-size: 22px;"></i></span>
+                <span class="icon-button__badge"><%= adminrequestCount %></span>
+                        </button>
+                            </div>
+                                    </div>
+ <!-- Modal -->
+<div class="modal fade" id="admin_requestModal" tabindex="-1" aria-labelledby="admin_requestModal2" aria-hidden="true">
+    <div class="modal-dialog "  style="display: flex; justify-content: center;">
+      <div class="modal-content" style="width: fit-content;">
+        <div class="modal-header">
+          <h5 class="modal-title" id="admin_requestModal2">All Request from User</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
+        <div class="modal-body" style="width: max-content;">
+            <% if (typeof response2 != undefined) { %>
+                <% if(response2[0]){ %>
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Transection Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Total Amounts</th>
+                    <th scope="col">Payment Type</th>
+                    <th scope="col">Payment Date</th>
+                    <th scope="col">Request send at</th>
+                    <th scope="col">Current status</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <% response2.forEach((e) => { %>
+                <tbody>
+                  <tr>
+                    <th scope="row"><%= e.id %></th>
+                    <td><%= e.full_name %></td>
+                    <td><%= e.total_amount %></td>
+                    <td><%= e.types %></td>
+                    <td><%= e.payments_date %></td>
+                    <td><%= e.request_time.toLocaleDateString("es-CL") %></td>
+                    <% if (e.statuses == 'rejected') { %>
+                        <td style="color: red;"><%= e.statuses %></td>
+                        <% } else if (e.statuses == 'pending' || e.statuses == 'processing'){ %>
+                            <td style="color: #ffa200;"><%= e.statuses %></td>
+                       <% }else { %>
+                        <td style="color: green;"><%= e.statuses %></td>
+                    <% } %>   
+                    <td>
+                        <a href="/userRequest/details/<%= e.id %>"><button type="button" class="btn btn-warning"><i class="bi bi-eye-fill" style="color: white;"></i></button></a>
+                    </td>   
+                  </tr>
+                </tbody>
+                
+                <% }); %>
+              </table>
+                <% }else{ %>
+                    <h1>Not Request has found <i class="bi bi-emoji-frown-fill"></i></h1>
+                    <% } %>
+                <% } %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
     </div>
+  </div>
+  <!-- Modal end-->
+ </div>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -160,6 +225,11 @@
     <script src="https://cdn.jsdelivr.net/npm/simple-notify@0.5.5/dist/simple-notify.min.js"></script>
 
     <script>
+        // For Tooltips
+$(function() {
+  $('[data-toggle="tooltip"]').tooltip();
+  $('#admin_requestbtn').tooltip();
+});
         $(window).on("load",function () {
             let sucessAlert = "<%=success_msg %>";
             let errorsAlert = "<%=errors_msg %>";

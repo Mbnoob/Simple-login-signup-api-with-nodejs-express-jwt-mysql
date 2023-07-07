@@ -27,17 +27,44 @@
 }
 
 body {
+  
+  min-height: 100vh;
     background: linear-gradient(90deg,
             hsla(197, 100%, 63%, 1) 0%,
             hsla(294, 100%, 55%, 1) 100%);
 }
 
-.main {
+.container {
+    width: 40rem;
+    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2); 
+    border-radius: 7px;
+    position: relative;
+    height: 100%;
+    padding-bottom: 20px;
+    background: inherit;
+    overflow: hidden;
+    top: 138px;
+    padding-top: 15px;
+  }
+
+  .container:before {
+    content: "";
+    position: absolute;
+    background: inherit;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    box-shadow: inset 0 0 2000px rgba(255, 255, 255, .5);
+    filter: blur(10px);
+    margin: -20px;
+  }
+/* .main {
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-}
+} */
 
 h1 {
     text-align: center;
@@ -72,12 +99,12 @@ h1 {
     color: #ff4a08;
 }
 
-.container {
+/* .container {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 130px;
-}
+} */
 
 
 .container .table {
@@ -93,65 +120,52 @@ h1 {
     bottom: 20px;
     left: 30px;
 }
-.icon-button {
+
+.tables_footer{
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    color: #333333;
-    background: #cbf3f0;
-    border: none;
-    outline: none;
-    border-radius: 50%;
-    transition: all .2s ;
-  }
-  
-  .icon-button:hover {
-    cursor: pointer;
-  }
-  
-  .icon-button:active {
-    background: #cccccc;
-  }
-  
-  .icon-button__badge {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    width: 25px;
-    height: 25px;
-    background: red;
-    color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-  }
-
-  .icon-button:hover{
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  }
-
-  .icon-button:hover .icon-button__badge{
-    animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
-    transform: translate3d(0, 0, 0);
-    perspective: 1000px;
+    z-index: 10;
+display: flex;
+justify-content: space-evenly;
 }
 
-@keyframes shake {
-    10%, 90% {
-      transform: translate3d(-1px, 0, 0);
-    }
-    20%, 80% {
-      transform: translate3d(2px, 0, 0);
-    }
-    30%, 50%, 70% {
-      transform: translate3d(-4px, 0, 0);
-    }
-    40%, 60% {
-      transform: translate3d(4px, 0, 0);
-    }
+.tables_footer .Success_glass-button {
+    display: inline-block;
+    padding: 12px 18px;
+    border: 2px solid #70e000;
+    text-decoration: none;
+    border-radius: 20px;
+    background-color: #70e000;
+    color: white;
+    font-size: 14px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+
+ .tables_footer .Success_glass-button:hover{
+    background-color: rgba(255,255,255,0.1);
+    border: 2px solid #affc41;
+    backdrop-filter: blur(30px);
+    color: #affc41;
+  }
+
+ .tables_footer .reject_glass-button{
+    display: inline-block;
+    padding: 12px 18px;
+    border: 2px solid #d00000;;
+    text-decoration: none;
+    border-radius: 20px;
+    background-color: #d00000;
+    color: white;
+    font-size: 14px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+
+ .tables_footer .reject_glass-button:hover{
+    background-color: rgba(255,255,255,0.1);
+    border: 2px solid #d00000;
+    backdrop-filter: blur(30px);
+    color: #d00000;
   }

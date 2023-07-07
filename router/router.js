@@ -132,12 +132,9 @@ router.post("/login", sessionChecker, (req, res) => {
 //=================================================================================================================================================================
 // User Dashboard Routers.............
 router.get("/dashboard", authanticateUser, tokenAuthenticate, (req, res) => {
-  let sql = "SELECT registard_users.first_name, registard_users.last_name, GROUP_CONCAT(user_transection_details.descriptions)AS descriptions,transections_done.total_amount, GROUP_CONCAT(user_transection_details.amounts)AS amounts, transections_done.payments_date, transections_done.created_at, current_status.statuses FROM registard_users JOIN transections_done ON registard_users.id = transections_done.user_id JOIN user_transection_details ON user_transection_details.transection_id = transections_done.id JOIN current_status ON transections_done.current_status_id = current_status.id WHERE registard_users.id =? GROUP BY transections_done.created_at";
+  let sql = "SELECT transections_done.id,transections_done.is_deleted, transections_done.total_amount, transections_done.payments_date, transections_done.created_at, current_status.statuses FROM transections_done JOIN current_status ON transections_done.current_status_id = current_status.id WHERE transections_done.user_id =? GROUP BY transections_done.created_at";
     myconnections.query(sql,[req.session.userId],(err,result5)=>{
-      console.log(result5)
-      result5.forEach((e)=>{
-        console.log(e.created_at)
-      })
+      // console.log(result5)
       if (err) {
         console.log(err);
         throw err;
@@ -381,7 +378,7 @@ if (Array.isArray(options)) {
 
  
 } else {
-  return false;
+  // return false;
   let sql1 = "INSERT INTO `current_status`(`user_id`, `statuses`) VALUES (?, ?)";
   myconnections.query(sql1,[req.session.userId, "pending"],(err,result1)=>{
     let current_status_id = result1.insertId;
@@ -420,6 +417,83 @@ if (Array.isArray(options)) {
   
 });
 
+router.get('/edit/request/:id',authanticateUser,tokenAuthenticate,(req,res)=>{
+  let sql = 'SELECT transections_done.id AS transections_id, transections_done.total_amount, transections_done.types, transections_done.payments_date, user_transection_details.id AS user_transection_id, user_transection_details.descriptions, user_transection_details.amounts FROM transections_done JOIN user_transection_details ON user_transection_details.transection_id = transections_done.id WHERE transections_done.id =?';
+  myconnections.query(sql,[req.params.id],(err,result)=>{
+    // console.log(result, 'for edit section')
+   
+    if (err) {
+      console.log(err)
+    } else {
+      return res.render('editRequest',{
+        userId: req.session.userId,
+        username: req.session.name,
+        result
+      });
+    }
+  })
+})
+
+router.post('/edit/request/update',(req,res)=>{
+  // console.log(req.body);
+  let transections_id = req.body.transections_id;
+  let types = req.body.types;
+  let payments_date = req.body.payments_date;
+  let user_transection_id = req.body.user_transection_id;
+  let descriptions = req.body.descriptions;
+  let amounts = req.body.amounts;
+
+  const data = [];
+  user_transection_id.forEach((e,i) => {
+    let item ={
+      user_transection_id: e,
+      descriptions: descriptions[i],
+      amounts: amounts[i]
+    }
+    data.push(item);
+  });
+  let total = amounts.reduce((total,num)=> total+parseInt(num), 0)
+  
+    const transValue = [total, types, payments_date, transections_id];
+    let updateQuery;
+  data.forEach((element) => {
+    const {descriptions, amounts, user_transection_id, } = element;
+    const prams = [descriptions, amounts, user_transection_id];
+
+    updateQuery = ` UPDATE user_transection_details SET descriptions=?, amounts=?, updated_at=CURRENT_TIMESTAMP WHERE id =?`
+     myconnections.query(updateQuery, prams,(err,result)=>{
+    if (err) {
+      console.log(err);
+      throw err;
+    }
+  })
+  }); 
+  myconnections.query('UPDATE `transections_done` SET `total_amount`=?,`types`=?,`payments_date`=?,`updated_at`=CURRENT_TIMESTAMP WHERE id =?',transValue,(err)=>{
+    if (err) {
+      throw err;
+    }else{
+      req.flash('sucess', `Your request transection id ${transections_id} has been Updated Successfully`);
+      req.flash('titles', 'Hurry !');
+      return res.status(406).redirect("/dashboard");
+    }
+  });
+});
+
+router.post('/delete/request',authanticateUser,tokenAuthenticate,(req,res)=>{
+  let sql = 'UPDATE `transections_done` SET `is_deleted`=true,`deleted_at`=CURRENT_TIMESTAMP,`deleted_by`=?,`updated_at`=CURRENT_TIMESTAMP WHERE transections_done.id =?';
+  let transactionId = req.body.transactionId;
+  myconnections.query(sql,["user",transactionId],(err,result)=>{
+    if (err) {
+      console.log(err);
+      throw err;
+    } else {
+      req.flash('errors', `Your Transection id : ${transactionId} is Deleted`);
+      req.flash('titles', 'Oops !');
+      return res.status(200).redirect('/dashboard')
+    }
+  })
+  console.log(req.body);
+});
 
 // User Logout Section.....................................
 router.post("/logout", authanticateUser, (req, res) => {
@@ -501,12 +575,16 @@ router.get("/admindashboard", authanticateAdmin, adminChecker, (req, res) => {
     "SELECT registard_users.id,registard_users.first_name, registard_users.last_name, registard_users.dob, registard_users.email_id, roles.role FROM registard_users LEFT JOIN roles ON registard_users.id = roles.user_id",
     (err, response) => {
       if (err) throw err;
-      // console.log(response)
-      res.render("Admin/admindashboard", {
-        username: req.session.name,
-        userId: req.session.userId,
-        response,
-      });
+      myconnections.query(`SELECT transections_done.id, CONCAT(first_name, ' ', last_name) AS full_name, transections_done.total_amount, transections_done.types, transections_done.payments_date, transections_done.created_at as request_time, current_status.statuses FROM registard_users JOIN transections_done ON transections_done.user_id = registard_users.id JOIN current_status ON transections_done.current_status_id = current_status.id GROUP BY transections_done.payments_date`,(err,response2)=>{
+        if(err) throw err;
+        // console.log(response2)
+        res.render("Admin/admindashboard", {
+          username: req.session.name,
+          userId: req.session.userId,
+          response2,
+          response,
+        });
+      })
     }
   );
 });
@@ -688,8 +766,12 @@ router.post("/user/edit/:id", authanticateAdmin,adminChecker,(req, res) => {
     if (!results[0]) {
       myconnections.query('INSERT INTO `roles`(`user_id`, `role`) VALUES (?, ?)', [userid, role],(err,result)=>{
         if(err) {
-          return res.render('Admin/adminupdate_Userprofile', {err});
+          req.flash('errors', 'Request Not Complete');
+          req.flash('titles', 'Something Worng !');
+          return res.status(600).redirect('/admindashboard');
         }else{
+          req.flash('sucess', 'Profile Updated Sucessfully');
+          req.flash('titles', "Hurry !");
           return res.status(200).redirect('/admindashboard');
         }
       })
@@ -697,8 +779,12 @@ router.post("/user/edit/:id", authanticateAdmin,adminChecker,(req, res) => {
         myconnections.query('UPDATE `roles` SET `role`=?, `updated_at`=CURRENT_TIMESTAMP WHERE user_id = ?',[role, userid], (err,response)=>{
           if (err) {
             console.log(err)
-            return res.redirect('/admindashboard')
+            req.flash('errors', 'Request Not Complete');
+            req.flash('titles', 'Something Worng !');
+            return res.status(600).redirect('/admindashboard')
           } else {
+            req.flash('sucess', 'Profile Updated Sucessfully');
+            req.flash('titles', 'Hurry !');
             return res.status(200).redirect('/admindashboard'); 
           }
         })
@@ -706,6 +792,60 @@ router.post("/user/edit/:id", authanticateAdmin,adminChecker,(req, res) => {
   })
 });
 
+router.get('/userRequest/details/:id',authanticateAdmin,adminChecker,(req,res)=>{
+  myconnections.query('SELECT transections_done.user_id, transections_done.id, current_status.id as current_status_id, concat(registard_users.first_name," ",registard_users.last_name)as full_name, transections_done.total_amount, transections_done.types, transections_done.payments_date, transections_done.created_at as request_submit_date, current_status.statuses FROM registard_users JOIN transections_done ON transections_done.user_id = registard_users.id JOIN current_status ON transections_done.current_status_id = current_status.id WHERE transections_done.id =?',[req.params.id],(err,result)=>{
+    if(err) throw err;
+    myconnections.query('SELECT user_transection_details.descriptions, user_transection_details.amounts FROM transections_done JOIN user_transection_details ON transections_done.id = user_transection_details.transection_id WHERE transections_done.id =?',[req.params.id],(err,result2)=>{
+      if (err) throw err;
+      res.render("Admin/paymentDetails",{
+        username: req.session.name,
+        result,
+        result2
+    })
+  })
+  });
+});
+
+router.post('/user/details/aproved/:id',authanticateAdmin,adminChecker,(req,res)=>{
+  myconnections.query("UPDATE `current_status` SET `statuses`='approved',`updated_at`=CURRENT_TIMESTAMP WHERE id =?",[req.params.id],(err)=>{
+    if(err) throw err;
+    req.flash('sucess', 'Request Approved Sucessfully');
+    req.flash('titles', "Hurry !");
+    return res.status(406).redirect("/admindashboard");
+  });
+});
+
+router.post('/user/details/rejected/:id',(req,res)=>{
+  myconnections.query("UPDATE `current_status` SET `statuses`='rejected',`updated_at`=CURRENT_TIMESTAMP WHERE id =?",[req.params.id],(err)=>{
+    if(err) throw err;
+
+    req.flash('sucess', 'Request Rejected Sucessfully');
+    req.flash('titles', "Oops !");
+    return res.status(406).redirect("/admindashboard");
+  })
+});
+
+router.post('/userRequest/details/panmanent/delete',async(req,res)=>{
+  console.log(req.body)
+  try {
+    let transactionId = req.body.transecton_id;
+  let current_status_id = req.body.current_status_id;
+  myconnections.query('DELETE FROM `current_status` WHERE id=?',[current_status_id],(err)=>{
+    if(err) throw err;
+    myconnections.query('DELETE FROM `user_transection_details` WHERE transection_id =?',[transactionId],(err)=>{
+      if(err) throw err;
+      myconnections.query('DELETE FROM `transections_done` WHERE id =?', [transactionId], (err,result)=>{
+        if(err)throw err;
+        req.flash('sucess', 'User Request Deleted Parmanently');
+        req.flash('titles', "Oops !");
+        return res.status(200).redirect("/admindashboard");
+      })
+    })
+  })
+  } catch (error) {
+    console.log(error)
+  }
+});
 //=================================================================================================================================================================
 
 //Admin Logout Section......................................
@@ -720,7 +860,7 @@ router.post("/admin/logout", authanticateAdmin, (req, res) => {
   }
 });
 
-//=================================================================================END===============================================================================
+//===============================================================================END===============================================================================
 
 // Change Password Sections ................
 router.get("/changePassword", (req, res) => {
