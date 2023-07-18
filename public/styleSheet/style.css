@@ -52,12 +52,12 @@ form .inbox input {
 }
 form .button {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
 }
 #submit {
-  padding: 8px;
-  width: 100px;
-  margin: 5px;
+  width: 99px;
+  height: 45px;
+  margin: 6px;
   background-color: skyblue;
   border: none;
   cursor: pointer;
@@ -79,7 +79,8 @@ form .inbox input[type="date"]::-webkit-calendar-picker-indicator{
   width: 18px;
 }
 
-/* form .inbox img{
-  width: 5px;
-  height: 5px;
-}  */
+.regLink a{
+  font-size: 13px;
+  color: #303a4e;
+  font-weight: 700;
+}

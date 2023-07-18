@@ -128,7 +128,7 @@
   <% } %>
 </table>
 <div class="tables_footer">
-    <% if (result[0].statuses == 'approved' || result[0].statuses == 'rejected') { %>
+    <% if (result[0].statuses == 'approved' || result[0].statuses == 'rejected' || result[0].is_deleted == 1) { %>
         <form action="/userRequest/details/panmanent/delete" method="post" id="f1">
             <input type="hidden" name="transecton_id" value="<%= (typeof result != undefined)?result[0].id:'' %>">
             <input type="hidden" name="current_status_id" value="<%= (typeof result != undefined)?result[0].current_status_id:'' %>">

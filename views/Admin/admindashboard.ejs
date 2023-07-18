@@ -92,7 +92,7 @@
 
         <% let adminrequestCount = 0; %>
         <% response2.forEach((e,i) => { %>
-            <% if (e.statuses !== 'approved' && e.statuses !== 'rejected' ) { %>
+            <% if (e.statuses !== 'approved' && e.statuses !== 'rejected' && e.is_deleted !== 1) { %>
                 <% adminrequestCount++ %>
            <% } %>
        <% }); %>
@@ -186,11 +186,13 @@
                     <td><%= e.types %></td>
                     <td><%= e.payments_date %></td>
                     <td><%= e.request_time.toLocaleDateString("es-CL") %></td>
-                    <% if (e.statuses == 'rejected') { %>
-                        <td style="color: red;"><%= e.statuses %></td>
+                    <% if (e.is_deleted == 1) { %>
+                         <td style="color: red;">Deleted</td>
                         <% } else if (e.statuses == 'pending' || e.statuses == 'processing'){ %>
                             <td style="color: #ffa200;"><%= e.statuses %></td>
-                       <% }else { %>
+                       <% }else if (e.statuses == 'rejected'){ %>
+                        <td style="color: red;"><%= e.statuses %></td>
+                       <%} else { %>
                         <td style="color: green;"><%= e.statuses %></td>
                     <% } %>   
                     <td>

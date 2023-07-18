@@ -18,58 +18,71 @@ router.get("/reg", sessionChecker, (req, res) => {
 
 router.post("/reg", sessionChecker, (req, res) => {
   let salt = genSaltSync(10);
-  const { value, error } = schema.validate(req.body, { abortEarly: false });
+  const { value, error } = schema.validate(req.body, { abortEarly: true });
   let first_name = value.First_name;
   let last_name = value.Last_name;
-
-  // Extract Date From Date & Time
   let dateTime = value.dob;
-  let dob;
-  dob = dateTime.toLocaleDateString("es-CL");
-
   let email_id = value.email_id;
   let password = hashSync(value.conforn_passwords, salt);
   let username = value.First_name + " " + value.Last_name;
 
   if (error) {
-    return res.render("index", { error });
+    error.details.forEach((e) => {
+      req.flash('errors', `${e.message}`);
+      req.flash('titles', 'Vlidation Errors !');
+    });
+    return res.status(406).redirect("/reg");
   } else {
     if (!req.session.user) {
+      dateTime = dateTime.toLocaleDateString("es-CL");
       myconnections.query(
         "INSERT INTO `registard_users`(`first_name`, `last_name`, `dob`, `email_id`, `passwords`) VALUES (?, ?, ?, ?, ?)",
-        [first_name, last_name, dob, email_id, password],
+        [first_name, last_name, dateTime, email_id, password],
         (err, results) => {
-          let user_id = results.insertId;
-          // console.log(user_id, 'reg user_id')
           if (err) {
-            return res.render("index", { err });
+            if (err.errno == 1062) {
+            req.flash('errors', "Email Id is allready registard ");
+            req.flash('titles', 'Duplicate Entry !');
+            return res.status(406).redirect("/reg");
+            } else {
+              req.flash('errors', `${err.message}`);
+              req.flash('titles', 'Vlidation Errors !');
+              return res.status(406).redirect("/reg");
+            }
           } else {
-            (req.session.user = email_id),
-              (req.session.name = username),
-              (req.session.userId = user_id);
-            let result = {
-              user_id: user_id,
-              email_id: email_id,
-              username: username,
-            };
-            let jsonwebtoken = sign(
-              { result: result },
-              process.env.JWT_SECRET,
-              {
-                expiresIn: process.env.JWT_EXPAIRED,
-              }
-            );
-            res.cookie("token", jsonwebtoken, {
-              httpOnly: true,
-              secure: true,
+            let user_id = results.insertId;
+            myconnections.query('INSERT INTO `roles`(`user_id`, `role`, `created_by`) VALUES (?, ?, ?)',[user_id, "undefined", "user"],(err)=>{
+              if (err) throw err;
             });
-            return res.redirect("/dashboard");
+            (req.session.user = email_id),
+            (req.session.name = username),
+            (req.session.userId = user_id);
+          let result = {
+            user_id: user_id,
+            email_id: email_id,
+            username: username,
+          };
+          let jsonwebtoken = sign(
+            { result: result },
+            process.env.JWT_SECRET,
+            {
+              expiresIn: process.env.JWT_EXPAIRED,
+            }
+          );
+          res.cookie("token", jsonwebtoken, {
+            httpOnly: true,
+            secure: true,
+          });
+          req.flash('titles', `${username}`);
+          req.flash('sucess', 'You Are Registerd Successfully');
+          return res.redirect("/dashboard");
           }
         }
       );
     }
   }
 });
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // User Login Routers..............
 router.get("/login", sessionChecker, (req, res) => {
@@ -87,9 +100,10 @@ router.post("/login", sessionChecker, (req, res) => {
     return res.status(406).redirect("/login");
   } else {
     myconnections.query(
-      "SELECT registard_users.*,roles.* FROM registard_users JOIN roles ON registard_users.id = roles.user_id WHERE registard_users.email_id =?",
+      "SELECT registard_users.id AS user_id, concat(registard_users.first_name, ' ', registard_users.last_name)AS full_name, registard_users.dob, registard_users.email_id, registard_users.passwords, roles.* FROM registard_users LEFT JOIN roles ON registard_users.id = roles.user_id WHERE registard_users.email_id =?",
       [email],
       (err, result) => {
+        console.log(result)
         if (err) {
           req.flash('errors', `${err.sqlMessage}`);
           req.flash('titles', 'Mysql Errors !');
@@ -107,7 +121,7 @@ router.post("/login", sessionChecker, (req, res) => {
           } else {
             let validUser = compareSync(value.log_passwords,result[0].passwords);
             if (validUser) {
-              let username = result[0].first_name + " " + result[0].last_name;
+              let username = result[0].full_name;
               (req.session.user = email), (req.session.name = username);
               req.session.userId = result[0].user_id;
               let jsonwebtoken = sign({ result: result[0] },process.env.JWT_SECRET,{expiresIn: process.env.JWT_EXPAIRED,});
@@ -317,8 +331,9 @@ router.post('/add_request',authanticateUser,tokenAuthenticate,(req,res)=>{
   let descriptions = req.body.descriptions;
   let amounts = req.body.amounts;
   let Payments_date = req.body.Payment_date;
-
-if (Array.isArray(options)) {
+console.log(descriptions)
+// return false
+if (Array.isArray(options, amounts, descriptions)) {
   const data = [];
 
   for (let i = 0; i < descriptions.length; i++) {
@@ -333,9 +348,6 @@ if (Array.isArray(options)) {
   const totals = amounts.reduce((total, amount) => total + parseInt(amount), 0);
   let pay_date = data[0].Payment_date;
   let types = data[0].options
-
-//   console.log(payment_date, types)
-// return false;
   let sql1 = "INSERT INTO `current_status`(`user_id`, `statuses`) VALUES (?, ?)";
   myconnections.query(sql1,[req.session.userId, "pending"],(err,result1)=>{
     let current_status_id = result1.insertId;
@@ -374,11 +386,7 @@ if (Array.isArray(options)) {
       }  
     }
   });
-  
-
- 
 } else {
-  // return false;
   let sql1 = "INSERT INTO `current_status`(`user_id`, `statuses`) VALUES (?, ?)";
   myconnections.query(sql1,[req.session.userId, "pending"],(err,result1)=>{
     let current_status_id = result1.insertId;
@@ -389,15 +397,15 @@ if (Array.isArray(options)) {
     } else {
       if (result1) {
       let sql2 = "INSERT INTO `transections_done`(`user_id`, `total_amount`, `types`, `payments_date`, `current_status_id`) VALUES (?, ?, ?, ?, ?)"; 
-      myconnections.query(sql2,[req.session.userId, amounts, options, Payment_date, current_status_id],(err,result2)=>{
+      myconnections.query(sql2,[req.session.userId, amounts, options, Payments_date, current_status_id],(err,result2)=>{
         let transection_id = result2.insertId;
         if (err) {
           console.log(err)
           throw err;
         } else {
           if (result2) {
-            let sql3 = "INSERT INTO `user_transection_details`(`user_id`, `transection_id`, `descriptions`, `amounts`) VALUES (?, ?, ?, ?)";
-            myconnections.query(sql3,[req.session.userId, transection_id, descriptions, amounts ],(err,result)=>{
+            let sql5 = "INSERT INTO `user_transection_details`(`user_id`, `transection_id`, `descriptions`, `amounts`) VALUES (?, ?, ?, ?)";
+            myconnections.query(sql5,[req.session.userId, transection_id, descriptions, amounts ],(err,result)=>{
               if (err) {
                 console.log(err);
                 throw err;
@@ -419,9 +427,7 @@ if (Array.isArray(options)) {
 
 router.get('/edit/request/:id',authanticateUser,tokenAuthenticate,(req,res)=>{
   let sql = 'SELECT transections_done.id AS transections_id, transections_done.total_amount, transections_done.types, transections_done.payments_date, user_transection_details.id AS user_transection_id, user_transection_details.descriptions, user_transection_details.amounts FROM transections_done JOIN user_transection_details ON user_transection_details.transection_id = transections_done.id WHERE transections_done.id =?';
-  myconnections.query(sql,[req.params.id],(err,result)=>{
-    // console.log(result, 'for edit section')
-   
+  myconnections.query(sql,[req.params.id],(err,result)=>{   
     if (err) {
       console.log(err)
     } else {
@@ -435,7 +441,6 @@ router.get('/edit/request/:id',authanticateUser,tokenAuthenticate,(req,res)=>{
 })
 
 router.post('/edit/request/update',(req,res)=>{
-  // console.log(req.body);
   let transections_id = req.body.transections_id;
   let types = req.body.types;
   let payments_date = req.body.payments_date;
@@ -443,40 +448,52 @@ router.post('/edit/request/update',(req,res)=>{
   let descriptions = req.body.descriptions;
   let amounts = req.body.amounts;
 
-  const data = [];
-  user_transection_id.forEach((e,i) => {
-    let item ={
-      user_transection_id: e,
-      descriptions: descriptions[i],
-      amounts: amounts[i]
-    }
-    data.push(item);
-  });
-  let total = amounts.reduce((total,num)=> total+parseInt(num), 0)
+  if (Array.isArray(amounts, user_transection_id, descriptions)) {
+    const data = [];
+    user_transection_id.forEach((e,i) => {
+      let item ={
+        user_transection_id: e,
+        descriptions: descriptions[i],
+        amounts: amounts[i]
+      }
+      data.push(item);
+    });
+    let total = amounts.reduce((total,num)=> total+parseInt(num), 0)
+    
+      const transValue = [total, types, payments_date, transections_id];
+      let updateQuery;
+    data.forEach((element) => {
+      const {descriptions, amounts, user_transection_id, } = element;
+      const prams = [descriptions, amounts, user_transection_id];
   
-    const transValue = [total, types, payments_date, transections_id];
-    let updateQuery;
-  data.forEach((element) => {
-    const {descriptions, amounts, user_transection_id, } = element;
-    const prams = [descriptions, amounts, user_transection_id];
-
-    updateQuery = ` UPDATE user_transection_details SET descriptions=?, amounts=?, updated_at=CURRENT_TIMESTAMP WHERE id =?`
-     myconnections.query(updateQuery, prams,(err,result)=>{
-    if (err) {
-      console.log(err);
-      throw err;
-    }
-  })
-  }); 
-  myconnections.query('UPDATE `transections_done` SET `total_amount`=?,`types`=?,`payments_date`=?,`updated_at`=CURRENT_TIMESTAMP WHERE id =?',transValue,(err)=>{
-    if (err) {
-      throw err;
-    }else{
+      updateQuery = ` UPDATE user_transection_details SET descriptions=?, amounts=?, updated_at=CURRENT_TIMESTAMP WHERE id =?`
+       myconnections.query(updateQuery, prams,(err,result)=>{
+      if (err) {
+        console.log(err);
+        throw err;
+      }
+    })
+    }); 
+    myconnections.query('UPDATE `transections_done` SET `total_amount`=?,`types`=?,`payments_date`=?,`updated_at`=CURRENT_TIMESTAMP WHERE id =?',transValue,(err)=>{
+      if (err) {
+        throw err;
+      }else{
+        req.flash('sucess', `Your request transection id ${transections_id} has been Updated Successfully`);
+        req.flash('titles', 'Hurry !');
+        return res.status(406).redirect("/dashboard");
+      }
+    });
+  } else {
+    myconnections.query('UPDATE user_transection_details SET descriptions=?, amounts=?, updated_at=CURRENT_TIMESTAMP WHERE id =?',[descriptions, amounts, user_transection_id],(err)=>{
+      if (err) throw err;
+    myconnections.query('UPDATE `transections_done` SET `total_amount`=?,`types`=?,`payments_date`=?,`updated_at`=CURRENT_TIMESTAMP WHERE id =?',[amounts, types, payments_date, transections_id],(err)=>{
+      if (err) throw err;
       req.flash('sucess', `Your request transection id ${transections_id} has been Updated Successfully`);
       req.flash('titles', 'Hurry !');
       return res.status(406).redirect("/dashboard");
-    }
-  });
+    })
+    })
+  };
 });
 
 router.post('/delete/request',authanticateUser,tokenAuthenticate,(req,res)=>{
@@ -492,7 +509,6 @@ router.post('/delete/request',authanticateUser,tokenAuthenticate,(req,res)=>{
       return res.status(200).redirect('/dashboard')
     }
   })
-  console.log(req.body);
 });
 
 // User Logout Section.....................................
@@ -575,9 +591,9 @@ router.get("/admindashboard", authanticateAdmin, adminChecker, (req, res) => {
     "SELECT registard_users.id,registard_users.first_name, registard_users.last_name, registard_users.dob, registard_users.email_id, roles.role FROM registard_users LEFT JOIN roles ON registard_users.id = roles.user_id",
     (err, response) => {
       if (err) throw err;
-      myconnections.query(`SELECT transections_done.id, CONCAT(first_name, ' ', last_name) AS full_name, transections_done.total_amount, transections_done.types, transections_done.payments_date, transections_done.created_at as request_time, current_status.statuses FROM registard_users JOIN transections_done ON transections_done.user_id = registard_users.id JOIN current_status ON transections_done.current_status_id = current_status.id GROUP BY transections_done.payments_date`,(err,response2)=>{
+      myconnections.query(`SELECT transections_done.id, CONCAT(first_name, ' ', last_name) AS full_name, transections_done.total_amount, transections_done.types, transections_done.payments_date, transections_done.created_at as request_time, current_status.statuses, transections_done.is_deleted, transections_done.deleted_by FROM registard_users JOIN transections_done ON transections_done.user_id = registard_users.id JOIN current_status ON transections_done.current_status_id = current_status.id GROUP BY transections_done.payments_date`,(err,response2)=>{
         if(err) throw err;
-        // console.log(response2)
+        console.log(response2)
         res.render("Admin/admindashboard", {
           username: req.session.name,
           userId: req.session.userId,
@@ -793,7 +809,7 @@ router.post("/user/edit/:id", authanticateAdmin,adminChecker,(req, res) => {
 });
 
 router.get('/userRequest/details/:id',authanticateAdmin,adminChecker,(req,res)=>{
-  myconnections.query('SELECT transections_done.user_id, transections_done.id, current_status.id as current_status_id, concat(registard_users.first_name," ",registard_users.last_name)as full_name, transections_done.total_amount, transections_done.types, transections_done.payments_date, transections_done.created_at as request_submit_date, current_status.statuses FROM registard_users JOIN transections_done ON transections_done.user_id = registard_users.id JOIN current_status ON transections_done.current_status_id = current_status.id WHERE transections_done.id =?',[req.params.id],(err,result)=>{
+  myconnections.query('SELECT transections_done.user_id, transections_done.id, current_status.id as current_status_id, concat(registard_users.first_name," ",registard_users.last_name)as full_name, transections_done.total_amount, transections_done.types, transections_done.payments_date, transections_done.created_at as request_submit_date, current_status.statuses, transections_done.is_deleted, transections_done.deleted_by FROM registard_users JOIN transections_done ON transections_done.user_id = registard_users.id JOIN current_status ON transections_done.current_status_id = current_status.id WHERE transections_done.id =?',[req.params.id],(err,result)=>{
     if(err) throw err;
     myconnections.query('SELECT user_transection_details.descriptions, user_transection_details.amounts FROM transections_done JOIN user_transection_details ON transections_done.id = user_transection_details.transection_id WHERE transections_done.id =?',[req.params.id],(err,result2)=>{
       if (err) throw err;
